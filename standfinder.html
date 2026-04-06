@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#1A1A1A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GITEX Stand Finder">
+<title>GITEX Africa · Stand Finder</title>
+<link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"GITEX Africa Stand Finder","short_name":"Stand Finder","start_url":".","display":"standalone","background_color":"%23ffffff","theme_color":"%231A1A1A","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22><rect width=%22192%22 height=%22192%22 rx=%2236%22 fill=%22%231A1A1A%22/><text x=%2296%22 y=%22118%22 font-family=%22sans-serif%22 font-size=%2270%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22%231DBF73%22>G.</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
+<link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="%231A1A1A"/><text x="16" y="22" font-family="sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="%231DBF73">G.</text></svg>'>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --ink:#1A1A1A; --ink-2:#555; --mute:#999; --line:#EBEBEB;
+  --soft:#FAFAFA; --soft-2:#F5F5F5; --green:#1DBF73; --green-d:#0D8C4C; --green-l:#F0FBF5;
+  --shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 32px -16px rgba(0,0,0,.12);
+  --safe-t:env(safe-area-inset-top); --safe-b:env(safe-area-inset-bottom);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0E0F11; --ink:#F5F5F5; --ink-2:#BEBEBE; --mute:#777; --line:#23252A;
+    --soft:#16181C; --soft-2:#1B1E23; --green-l:#0F2A1D; --shadow:0 1px 2px rgba(0,0,0,.4), 0 16px 40px -16px rgba(0,0,0,.6); }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'DM Sans',-apple-system,system-ui,sans-serif;
+  font-size:15px; line-height:1.5;
+  overscroll-behavior-y:contain;
+}
+.app{
+  min-height:100dvh; display:flex; flex-direction:column;
+  max-width:560px; margin:0 auto;
+  padding-top:var(--safe-t); padding-bottom:var(--safe-b);
+}
+header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 24px 0;
+}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px}
+.logo span{color:var(--green)}
+.date{font-size:11px;color:var(--mute);letter-spacing:.5px}
+.progress{padding:18px 24px 0}
+.bar{height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.fill{height:100%;background:var(--green);transition:width .45s cubic-bezier(.4,0,.2,1)}
+.meta{display:flex;justify-content:space-between;margin-top:8px}
+.meta b{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--green);text-transform:uppercase}
+.meta i{font-style:normal;font-size:11px;color:var(--mute)}
+main{flex:1;padding:28px 24px 12px;overflow-x:hidden}
+.step{animation:in .32s cubic-bezier(.4,0,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:24px;line-height:1.2;margin-bottom:6px}
+.sub{color:var(--mute);font-size:14px;margin-bottom:22px}
+.lang{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.lang button{
+  background:var(--soft);border:1.5px solid var(--line);border-radius:14px;
+  padding:20px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;
+  cursor:pointer;transition:.18s;color:var(--ink);font:inherit;
+}
+.lang button.sel,.lang button:hover{border-color:var(--green);background:var(--green-l)}
+.lang .flag{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1px solid var(--line);display:flex}
+.lang label{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px}
+.list{display:flex;flex-direction:column;gap:9px;margin-bottom:20px}
+.row{
+  background:var(--soft);border:1.5px solid var(--line);border-radius:13px;
+  padding:14px 15px;display:flex;align-items:center;gap:13px;cursor:pointer;
+  transition:.18s;text-align:left;color:var(--ink);font:inherit;width:100%;
+}
+.row.sel,.row:hover{border-color:var(--green);background:var(--green-l)}
+.row .ico{width:38px;height:38px;border-radius:10px;background:var(--soft-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.18s}
+.row.sel .ico{background:#D6F5E6}
+.row .lbl{flex:1;font-size:14px;font-weight:500}
+.tick{width:20px;height:20px;border-radius:50%;border:1.5px solid #D0D0D0;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.18s}
+.row.sel .tick{background:var(--green);border-color:var(--green)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.chip{
+  background:var(--soft-2);border:1.5px solid var(--line);border-radius:22px;
+  padding:9px 14px;font-size:13px;font-weight:500;color:var(--ink-2);
+  cursor:pointer;transition:.18s;font-family:inherit;
+}
+.chip.sel{background:var(--green-l);border-color:var(--green);color:var(--green-d)}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+.hint{font-size:12px;color:var(--mute);margin-bottom:20px}
+input,select{
+  width:100%;background:var(--soft);border:1.5px solid var(--line);border-radius:13px;
+  padding:14px 15px;font-size:15px;color:var(--ink);font-family:inherit;
+  outline:none;transition:border-color .18s;margin-bottom:10px;
+  -webkit-appearance:none;appearance:none;
+}
+input::placeholder{color:var(--mute)}
+input:focus,select:focus{border-color:var(--green)}
+input.err{border-color:#E0526B}
+.err-msg{font-size:12px;color:#E0526B;margin:-6px 2px 10px}
+.sel-wrap{position:relative}
+.sel-wrap::after{
+  content:'';position:absolute;right:16px;top:22px;width:0;height:0;
+  border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid var(--mute);pointer-events:none;
+}
+footer{padding:8px 24px 24px;display:flex;flex-direction:column;gap:8px}
+.btn{
+  width:100%;padding:16px;background:var(--ink);color:var(--bg);
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;letter-spacing:.3px;
+  border:none;border-radius:14px;cursor:pointer;transition:.18s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn:disabled{background:var(--line);color:var(--mute);cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink-2);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--mute)}
+.result{text-align:center}
+.badge{display:inline-block;background:var(--green-l);color:var(--green-d);
+  font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  padding:6px 14px;border-radius:20px;margin-bottom:14px}
+.zone{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:32px;line-height:1.1;margin-bottom:6px}
+.where{color:var(--mute);font-size:14px;margin-bottom:22px}
+.card{background:var(--soft);border:1.5px solid var(--line);border-radius:16px;padding:18px;text-align:left;margin-bottom:14px}
+.card .r{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);gap:14px}
+.card .r:first-child{padding-top:0}
+.card .r:last-child{padding-bottom:0;border-bottom:none}
+.card .k{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px}
+.card .v{font-size:14px;font-weight:500;text-align:right;max-width:60%;line-height:1.4}
+.card .v.accent{color:var(--green-d)}
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + var(--safe-b));transform:translateX(-50%);
+  background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;
+  font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+@media (min-width:560px){
+  .app{border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  main{padding:32px 32px 16px}
+  header,.progress{padding-left:32px;padding-right:32px}
+  footer{padding:8px 32px 32px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">GITEX<span>.</span>AFRICA</div>
+    <div class="date">7–9 AVR 2026 · MARRAKECH</div>
+  </header>
+  <div class="progress">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="meta"><b id="plabel"></b><i id="pcount"></i></div>
+  </div>
+  <main id="main"></main>
+  <footer id="foot"></footer>
+</div>
+<div class="toast" id="toast"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke="currentColor"/><path d="M4 7l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="tmsg"></span></div>
+
+<script>
+'use strict';
+
+const STORAGE_KEY = 'gitex.standfinder.v1';
+
+const DEFAULT_STATE = {
+  step:1, lang:'fr', profile:null, interests:[], objective:null,
+  country:null, name:'', email:'', company:''
+};
+
+const TX = {
+  fr:{ steps:['Langue','Profil','Intérêts','Objectif','Pays','Contact','Résultat'],
+    q:["Dans quelle langue ?","Quel est votre profil ?","Vos domaines d'intérêt","Votre objectif principal","Votre pays d'origine","Vos coordonnées"],
+    sub:["Choisissez votre langue pour continuer.","Sélectionnez votre profil visiteur.","Choisissez jusqu'à 3 domaines.","Que souhaitez-vous accomplir ici ?","D'où venez-vous ?","Dernière étape, presque arrivé !"],
+    cont:'Continuer', back:'Retour', submit:'Trouver mon stand', save:'Enregistrer mon itinéraire',
+    share:'Partager', restart:'Recommencer',
+    fname:'Prénom', email:'Email professionnel', company:'Entreprise (optionnel)',
+    hint:'Maximum 3 sélections', badge:'Recommandation',
+    profileL:'Profil', topicsL:'Domaines', whereL:'Emplacement', visitL:'Visiteur',
+    saved:'Itinéraire sauvegardé', shared:'Lien copié',
+    invEmail:'Email invalide', invName:'Prénom requis',
+    select:'Sélectionner' },
+  en:{ steps:['Language','Profile','Interests','Goal','Country','Contact','Result'],
+    q:["What language?","What's your profile?","Your areas of interest","Your main goal","Your country","Your details"],
+    sub:["Choose your preferred language.","Select your visitor profile.","Pick up to 3 topics.","What do you want to achieve here?","Where are you coming from?","Last step, almost there!"],
+    cont:'Continue', back:'Back', submit:'Find my stand', save:'Save my itinerary',
+    share:'Share', restart:'Start over',
+    fname:'First name', email:'Work email', company:'Company (optional)',
+    hint:'Maximum 3 selections', badge:'Recommendation',
+    profileL:'Profile', topicsL:'Topics', whereL:'Location', visitL:'Visitor',
+    saved:'Itinerary saved', shared:'Link copied',
+    invEmail:'Invalid email', invName:'First name required',
+    select:'Select' }
+};
+
+const PROFILES = [
+  {id:'startup', fr:'Startup / Entrepreneur', en:'Startup / Entrepreneur', ico:'startup'},
+  {id:'corp',    fr:'Corporate / Entreprise', en:'Corporate / Enterprise', ico:'corp'},
+  {id:'investor',fr:'Investisseur / VC',      en:'Investor / VC',          ico:'investor'},
+  {id:'student', fr:'Étudiant / Chercheur',   en:'Student / Researcher',   ico:'student'},
+  {id:'media',   fr:'Média / Presse',         en:'Media / Press',          ico:'media'}
+];
+const TOPICS = ['AI & Machine Learning','Cloud & IoT','Cybersecurity','Fintech & Banking','Agritech','Health Tech','Telecom & 5G','Smart Cities','Web3 & Blockchain'];
+const OBJECTIVES = [
+  {id:'partners',fr:'Trouver partenaires / clients',en:'Find partners / clients',ico:'handshake'},
+  {id:'discover',fr:'Découvrir des innovations',    en:'Discover innovations',   ico:'discover'},
+  {id:'promote', fr:'Promouvoir mon entreprise',    en:'Promote my company',     ico:'promote'},
+  {id:'invest',  fr:'Rencontrer des investisseurs', en:'Meet investors',         ico:'investor'},
+  {id:'learn',   fr:"Apprendre & m'inspirer",       en:'Learn & get inspired',   ico:'learn'}
+];
+const COUNTRIES = ['Maroc','Algérie','Tunisie','Égypte','Sénégal',"Côte d'Ivoire",'Kenya','Nigeria','Afrique du Sud','Ghana','Rwanda','France','Espagne','Allemagne','Italie','Royaume-Uni','États-Unis','Émirats Arabes Unis','Chine','Inde'];
+
+const ICONS = {
+  startup:'<path d="M9 2L11.5 7H16L12 10.5L13.5 16L9 13L4.5 16L6 10.5L2 7H6.5L9 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+  corp:'<rect x="3" y="7" width="12" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M6 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5"/><line x1="9" y1="10" x2="9" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  investor:'<path d="M3 13L7 9l3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 7h3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  student:'<path d="M9 3L16 7l-7 4L2 7l7-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M5 9v4c0 1.1 1.8 2 4 2s4-.9 4-2V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  media:'<rect x="2" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="9" r="2" stroke="currentColor" stroke-width="1.5"/>',
+  handshake:'<path d="M2 7l4.5 1.5L9 7l2.5 1.5L16 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 9.5c0 2.5 4 5 4 5s4-2.5 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  discover:'<circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M12 12l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  promote:'<path d="M3 7h2l4-3 4 3h2v4h-2l-4 3-4-3H3V7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+  learn:'<path d="M4 14V6l5-3 5 3v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="10" width="4" height="4" rx="0.5" stroke="currentColor" stroke-width="1.5"/>'
+};
+const ico = id => `<svg width="20" height="20" viewBox="0 0 18 18" fill="none" style="color:var(--green-d)">${ICONS[id]||''}</svg>`;
+const tick = `<svg width="11" height="11" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const arrow = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const arrowL = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+// ---- state ----
+let S = load();
+function load(){
+  try{
+    const url = new URL(location.href);
+    if(url.searchParams.has('s')){
+      const decoded = JSON.parse(atob(url.searchParams.get('s')));
+      return { ...DEFAULT_STATE, ...decoded, step:7 };
+    }
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+  }catch(e){}
+  return { ...DEFAULT_STATE };
+}
+function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(S)); }catch(e){} }
+
+// ---- recommendation ----
+function getZone(){
+  const p=S.profile, o=S.objective;
+  if(p==='investor'||o==='invest') return {zone:'Investor Lounge', hall:'Hall A · Rang 1'};
+  if(p==='startup' ||o==='promote') return {zone:'Startup Valley',  hall:'Hall B · Rang 3'};
+  if(p==='student' ||o==='learn')   return {zone:'Innovation Hub',  hall:'Hall C · Rang 7'};
+  if(p==='media')                   return {zone:'Media Centre',    hall:'Hall A · Rang 9'};
+  if(S.interests.some(t=>/AI|Cloud|Web3/i.test(t))) return {zone:'Tech Pavilion', hall:'Hall B · Rang 5'};
+  return {zone:'Enterprise Zone', hall:'Hall D · Rang 2'};
+}
+
+// ---- validation ----
+const emailOk = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
+// ---- render ----
+const $main = document.getElementById('main');
+const $foot = document.getElementById('foot');
+
+function render(){
+  const L = TX[S.lang];
+  const total = 6;
+  document.documentElement.lang = S.lang;
+  document.getElementById('fill').style.width = Math.min(100, (S.step/total)*100) + '%';
+  document.getElementById('plabel').textContent = L.steps[S.step-1] || '';
+  document.getElementById('pcount').textContent = S.step<=total ? `${S.step} / ${total}` : '';
+
+  const v = views[S.step] || views[1];
+  $main.innerHTML = v.body();
+  $foot.innerHTML = v.foot();
+  // focus first input if any
+  const first = $main.querySelector('input,select');
+  if(first && S.step!==1) setTimeout(()=>first.focus({preventScroll:true}),60);
+  save();
+}
+
+const views = {
+  1:{
+    body:()=>`<div class="step">
+      <h1>${TX.fr.q[0]}</h1>
+      <p class="sub">${TX.fr.sub[0]}</p>
+      <div class="lang">
+        <button class="${S.lang==='fr'?'sel':''}" data-act="lang" data-v="fr">
+          <div class="flag"><svg width="40" height="40" viewBox="0 0 36 36"><rect width="12" height="36" fill="#002395"/><rect x="12" width="12" height="36" fill="#fff"/><rect x="24" width="12" height="36" fill="#ED2939"/></svg></div>
+          <label>Français</label></button>
+        <button class="${S.lang==='en'?'sel':''}" data-act="lang" data-v="en">
+          <div class="flag"><svg width="40" height="40" viewBox="0 0 36 36"><rect width="36" height="36" fill="#012169"/><path d="M0 0l36 36M36 0L0 36" stroke="#fff" stroke-width="5"/><path d="M0 0l36 36M36 0L0 36" stroke="#C8102E" stroke-width="3"/><path d="M18 0v36M0 18h36" stroke="#fff" stroke-width="9"/><path d="M18 0v36M0 18h36" stroke="#C8102E" stroke-width="5"/></svg></div>
+          <label>English</label></button>
+      </div></div>`,
+    foot:()=>`<button class="btn" data-act="next">Continuer / Continue ${arrow}</button>`
+  },
+  2:{
+    body:()=>{
+      const L=TX[S.lang];
+      const rows = PROFILES.map(p=>{
+        const sel = S.profile===p.id;
+        return `<button class="row ${sel?'sel':''}" data-act="set" data-k="profile" data-v="${p.id}">
+          <span class="ico">${ico(p.ico)}</span><span class="lbl">${p[S.lang]}</span>
+          <span class="tick">${sel?tick:''}</span></button>`;
+      }).join('');
+      return `<div class="step"><h1>${L.q[1]}</h1><p class="sub">${L.sub[1]}</p><div class="list">${rows}</div></div>`;
+    },
+    foot:()=>cta(!S.profile)
+  },
+  3:{
+    body:()=>{
+      const L=TX[S.lang];
+      const max = S.interests.length>=3;
+      const chips = TOPICS.map(t=>{
+        const sel = S.interests.includes(t);
+        return `<button class="chip ${sel?'sel':''}" data-act="topic" data-v="${t}" ${(!sel&&max)?'disabled':''}>${t}</button>`;
+      }).join('');
+      return `<div class="step"><h1>${L.q[2]}</h1><p class="sub">${L.sub[2]}</p>
+        <div class="chips">${chips}</div><div class="hint">${L.hint} · ${S.interests.length}/3</div></div>`;
+    },
+    foot:()=>cta(S.interests.length===0)
+  },
+  4:{
+    body:()=>{
+      const L=TX[S.lang];
+      const rows = OBJECTIVES.map(o=>{
+        const sel = S.objective===o.id;
+        return `<button class="row ${sel?'sel':''}" data-act="set" data-k="objective" data-v="${o.id}">
+          <span class="ico">${ico(o.ico)}</span><span class="lbl">${o[S.lang]}</span>
+          <span class="tick">${sel?tick:''}</span></button>`;
+      }).join('');
+      return `<div class="step"><h1>${L.q[3]}</h1><p class="sub">${L.sub[3]}</p><div class="list">${rows}</div></div>`;
+    },
+    foot:()=>cta(!S.objective)
+  },
+  5:{
+    body:()=>{
+      const L=TX[S.lang];
+      const opts = COUNTRIES.map(c=>`<option value="${c}" ${S.country===c?'selected':''}>${c}</option>`).join('');
+      return `<div class="step"><h1>${L.q[4]}</h1><p class="sub">${L.sub[4]}</p>
+        <div class="sel-wrap"><select data-act="country">
+          <option value="" disabled ${!S.country?'selected':''}>— ${L.select} —</option>${opts}
+        </select></div></div>`;
+    },
+    foot:()=>cta(!S.country)
+  },
+  6:{
+    body:()=>{
+      const L=TX[S.lang];
+      return `<div class="step"><h1>${L.q[5]}</h1><p class="sub">${L.sub[5]}</p>
+        <input type="text" autocomplete="given-name" placeholder="${L.fname}" value="${escAttr(S.name)}" data-act="field" data-k="name">
+        <input type="email" autocomplete="email" placeholder="${L.email}" value="${escAttr(S.email)}" data-act="field" data-k="email">
+        <input type="text" autocomplete="organization" placeholder="${L.company}" value="${escAttr(S.company)}" data-act="field" data-k="company">
+      </div>`;
+    },
+    foot:()=>{
+      const L=TX[S.lang];
+      const dis = !S.name.trim() || !emailOk(S.email);
+      return `<button class="btn" data-act="finish" ${dis?'disabled':''}>${L.submit} ${arrow}</button>
+        <button class="btn ghost" data-act="prev">${arrowL} ${L.back}</button>`;
+    }
+  },
+  7:{
+    body:()=>{
+      const L=TX[S.lang];
+      const rec = getZone();
+      const pLabel = (PROFILES.find(p=>p.id===S.profile)||{})[S.lang]||'—';
+      return `<div class="step result">
+        <div class="badge">${L.badge}</div>
+        <div class="zone">${rec.zone}</div>
+        <div class="where">${rec.hall} · Marrakech</div>
+        <div class="card">
+          <div class="r"><span class="k">${L.profileL}</span><span class="v">${esc(pLabel)}</span></div>
+          <div class="r"><span class="k">${L.topicsL}</span><span class="v">${esc(S.interests.join(', ')||'—')}</span></div>
+          <div class="r"><span class="k">${L.whereL}</span><span class="v accent">${rec.hall}</span></div>
+          <div class="r"><span class="k">${L.visitL}</span><span class="v">${esc(S.name)}${S.company?' · '+esc(S.company):''}</span></div>
+        </div></div>`;
+    },
+    foot:()=>{
+      const L=TX[S.lang];
+      return `<button class="btn" data-act="save">${L.save}</button>
+        <button class="btn ghost" data-act="share">${L.share}</button>
+        <button class="btn ghost" data-act="restart">${L.restart}</button>`;
+    }
+  }
+};
+
+function cta(disabled){
+  const L=TX[S.lang];
+  return `<button class="btn" data-act="next" ${disabled?'disabled':''}>${L.cont} ${arrow}</button>
+    <button class="btn ghost" data-act="prev">${arrowL} ${L.back}</button>`;
+}
+
+function esc(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+
+// ---- events (delegated) ----
+document.addEventListener('click', e=>{
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+  const act = el.dataset.act;
+  if(act==='lang'){ S.lang = el.dataset.v; render(); }
+  else if(act==='set'){ S[el.dataset.k] = el.dataset.v; render(); }
+  else if(act==='topic'){
+    const t = el.dataset.v;
+    if(S.interests.includes(t)) S.interests = S.interests.filter(x=>x!==t);
+    else if(S.interests.length<3) S.interests.push(t);
+    render();
+  }
+  else if(act==='next'){ if(S.step<6){ S.step++; render(); } }
+  else if(act==='prev'){ if(S.step>1){ S.step--; render(); } }
+  else if(act==='finish'){
+    if(!S.name.trim() || !emailOk(S.email)) return;
+    S.step = 7; render();
+  }
+  else if(act==='save'){ save(); toast(TX[S.lang].saved); }
+  else if(act==='share'){ shareLink(); }
+  else if(act==='restart'){
+    S = { ...DEFAULT_STATE };
+    history.replaceState(null,'',location.pathname);
+    render();
+  }
+});
+
+document.addEventListener('input', e=>{
+  const el = e.target.closest('[data-act="field"]');
+  if(el){ S[el.dataset.k] = el.value; updateFinishCta(); save(); return; }
+  const sel = e.target.closest('[data-act="country"]');
+  if(sel){ S.country = sel.value; render(); }
+});
+
+function updateFinishCta(){
+  const b = $foot.querySelector('[data-act="finish"]');
+  if(b) b.disabled = !S.name.trim() || !emailOk(S.email);
+}
+
+// keyboard: Enter advances when CTA enabled
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Enter') return;
+  const cta = $foot.querySelector('.btn:not(.ghost):not(:disabled)');
+  if(cta && document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault(); cta.click();
+  }
+});
+
+// share via Web Share API or clipboard fallback
+async function shareLink(){
+  const payload = btoa(JSON.stringify({
+    lang:S.lang, profile:S.profile, interests:S.interests,
+    objective:S.objective, country:S.country, name:S.name, company:S.company
+  }));
+  const url = location.origin + location.pathname + '?s=' + payload;
+  const rec = getZone();
+  const text = `${rec.zone} · ${rec.hall} — GITEX Africa 2026`;
+  try{
+    if(navigator.share){ await navigator.share({title:'GITEX Stand Finder', text, url}); return; }
+    await navigator.clipboard.writeText(url);
+    toast(TX[S.lang].shared);
+  }catch(e){}
+}
+
+// toast
+let toastT;
+function toast(msg){
+  const el = document.getElementById('toast');
+  document.getElementById('tmsg').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+render();
+</script>
+</body>
+</html>
