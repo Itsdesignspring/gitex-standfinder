@@ -537,7 +537,7 @@ function GitexApp() {
         setChatTriggered(true);
         setShowBubble(true);
       }
-    }, 18000); // 18 seconds of inactivity
+    }, 8000); // 8 seconds of inactivity
   }, [chatOpen, chatTriggered]);
 
   useEffect(() => {
@@ -551,7 +551,7 @@ function GitexApp() {
         setChatTriggered(true);
         setShowBubble(true);
       }
-    }, 25000);
+    }, 12000);
 
     return () => {
       events.forEach((e) => window.removeEventListener(e, resetInactivityTimer));
